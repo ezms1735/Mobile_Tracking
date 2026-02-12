@@ -1,8 +1,8 @@
-import { Ionicons } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useRouter } from 'expo-router';
-import { ref, set } from 'firebase/database';
-import React, { useEffect, useState } from 'react';
+import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
+import { ref, set } from "firebase/database";
+import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -11,33 +11,28 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from 'react-native';
-import BottomNavDriver from '../../components/ButtomNavDriver';
-import { getDriverPesanan } from '../../services/api';
-import { db } from '../../services/firebase';
-import { getCurrentLocation } from '../../services/location';
+} from "react-native";
+import BottomNavDriver from "../../components/ButtomNavDriver";
+import { getDriverPesanan } from "../../services/api";
+import { db } from "../../services/firebase";
+import { getCurrentLocation } from "../../services/location";
 
-// Path logo dari app/driver/beranda.tsx ke assets/images/logo.png
-const MOYA_LOGO = require('../../assets/images/logo.png');
+const MOYA_LOGO = require("../../assets/images/logo.png");
 
 const StatusBadge = ({ status }: { status: string }) => {
-  // Sesuaikan dengan status REAL yang dikirim API (case-sensitive lebih aman)
-  const statusLower = status?.toLowerCase() || '';
+  const statusLower = status?.toLowerCase() || "";
 
   const isProses =
-    statusLower === 'proses' ||
-    statusLower === 'dalam_proses' ||
-    statusLower === 'sedang_proses' ||
-    statusLower.includes('pengiriman');
+    statusLower === "proses" ||
+    statusLower === "dalam_proses" ||
+    statusLower === "sedang_proses" ||
+    statusLower.includes("pengiriman");
 
   return (
     <View
-      style={[
-        styles.badge,
-        isProses ? styles.badgeProses : styles.badgeBelum,
-      ]}
+      style={[styles.badge, isProses ? styles.badgeProses : styles.badgeBelum]}
     >
-      <Text style={styles.badgeText}>{isProses ? 'PROSES' : 'BELUM'}</Text>
+      <Text style={styles.badgeText}>{isProses ? "PROSES" : "BELUM"}</Text>
     </View>
   );
 };
@@ -49,16 +44,19 @@ export default function DriverBeranda() {
 
   const fetchPesanan = async () => {
     try {
+      const driverId = await AsyncStorage.getItem("driverId");
+      console.log("Fetching pesanan for driverId:", driverId);
       const data = await getDriverPesanan();
+      console.log("Pesanan data received:", data);
       setPesanan(data.pesanan || []);
     } catch (err) {
-      console.log('Gagal ambil pesanan:', err);
+      console.log("Gagal ambil pesanan:", err);
     }
   };
 
   const handlePilihPesanan = (item: any) => {
     router.push({
-      pathname: '/driver/mulai',
+      pathname: "/driver/mulai",
       params: { pesananId: item.id },
     });
   };
@@ -66,7 +64,7 @@ export default function DriverBeranda() {
   const kirimLokasi = async () => {
     try {
       const lokasi = await getCurrentLocation();
-      const driverId = await AsyncStorage.getItem('driverId');
+      const driverId = await AsyncStorage.getItem("driverId");
       if (lokasi && driverId) {
         await set(ref(db, `drivers/${driverId}`), {
           latitude: lokasi.latitude,
@@ -75,7 +73,7 @@ export default function DriverBeranda() {
         });
       }
     } catch (err) {
-      console.log('Gagal kirim lokasi', err);
+      console.log("Gagal kirim lokasi", err);
     }
   };
 
@@ -94,7 +92,6 @@ export default function DriverBeranda() {
 
   return (
     <View style={styles.container}>
-      {/* Header - sesuai desain dengan gambar moya */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <Image
@@ -107,7 +104,11 @@ export default function DriverBeranda() {
       </View>
 
       {loading ? (
-        <ActivityIndicator size="large" color="#00456B" style={{ marginTop: 80 }} />
+        <ActivityIndicator
+          size="large"
+          color="#00456B"
+          style={{ marginTop: 80 }}
+        />
       ) : pesanan.length === 0 ? (
         <View style={styles.emptyContainer}>
           <Ionicons name="cube-outline" size={64} color="#ccc" />
@@ -126,7 +127,7 @@ export default function DriverBeranda() {
             >
               <View style={styles.cardHeader}>
                 <Text style={styles.customerName}>
-                  {item.pelanggan?.nama_lengkap || 'Pelanggan'}
+                  {item.pelanggan?.nama_lengkap || "Pelanggan"}
                 </Text>
                 <StatusBadge status={item.status} />
               </View>
@@ -135,24 +136,22 @@ export default function DriverBeranda() {
                 <View style={styles.row}>
                   <Ionicons name="call-outline" size={16} color="#00456B" />
                   <Text style={styles.value}>
-                    {item.pelanggan?.telepon ||
-                      item.pelanggan?.no_telepon ||
-                      item.pelanggan?.whatsapp ||
-                      '-'}
+                    {item.pelanggan?.nomor_telepon ||
+                      "-"}
                   </Text>
                 </View>
 
                 <View style={styles.row}>
                   <Ionicons name="location-outline" size={16} color="#00456B" />
                   <Text style={styles.value} numberOfLines={2}>
-                    {item.pelanggan?.alamat || '-'}
+                    {item.pelanggan?.alamat || "-"}
                   </Text>
                 </View>
 
                 <View style={styles.row}>
                   <Text style={styles.labelSmall}>Jumlah: </Text>
                   <Text style={styles.valueBold}>
-                    {item.jumlah_pesanan || '0'} pack
+                    {item.jumlah_pesanan || "0"} pack
                   </Text>
                 </View>
               </View>
@@ -169,26 +168,27 @@ export default function DriverBeranda() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: "#F1F3F2",
+    paddingTop: 40,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 14,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: "#eee",
   },
   headerTitle: {
     fontSize: 20,
-    fontWeight: '700',
-    color: '#1a1a1a',
+    fontWeight: "700",
+    color: "#1a1a1a",
   },
   headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 12,
   },
   moyaLogo: {
@@ -198,29 +198,29 @@ const styles = StyleSheet.create({
   },
   listContent: {
     padding: 12,
-    paddingBottom: 90, // ruang untuk bottom nav
+    paddingBottom: 90,
   },
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 12,
     marginBottom: 10,
     padding: 14,
     elevation: 2,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.08,
     shadowRadius: 4,
   },
   cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 10,
   },
   customerName: {
     fontSize: 16,
-    fontWeight: '700',
-    color: '#111',
+    fontWeight: "700",
+    color: "#111",
     flex: 1,
     marginRight: 12,
   },
@@ -228,35 +228,35 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   row: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
   },
   labelSmall: {
     fontSize: 13,
-    color: '#777',
+    color: "#777",
   },
   value: {
     fontSize: 14,
-    color: '#333',
+    color: "#333",
     flexShrink: 1,
   },
   valueBold: {
     fontSize: 14,
-    fontWeight: '600',
-    color: '#222',
+    fontWeight: "600",
+    color: "#222",
   },
   emptyContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     paddingHorizontal: 40,
   },
   emptyText: {
     marginTop: 16,
-    color: '#888',
+    color: "#888",
     fontSize: 16,
-    textAlign: 'center',
+    textAlign: "center",
   },
 
   // Badge
@@ -266,14 +266,14 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   badgeProses: {
-    backgroundColor: '#ff9800',
+    backgroundColor: "#ff9800",
   },
   badgeBelum: {
-    backgroundColor: '#2196f3',
+    backgroundColor: "#2196f3",
   },
   badgeText: {
-    color: 'white',
+    color: "white",
     fontSize: 12,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });

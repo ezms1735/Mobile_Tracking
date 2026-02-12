@@ -25,7 +25,7 @@ interface PesananDetail {
   jumlah_pesanan: number | string;
 }
 
-export default function MulaiPesanan() {
+export default function LokasiPesanan() {  
   const router = useRouter();
   const { pesananId } = useLocalSearchParams<{ pesananId: string }>();
 
@@ -34,51 +34,51 @@ export default function MulaiPesanan() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-  if (!pesananId) {
-    setError("Pesanan ID tidak ditemukan");
-    setLoading(false);
-    return;
-  }
-
-  const fetchDetail = async () => {
-  try {
-    setLoading(true);
-    setError(null);
-
-    const res = await getPesananDetail(pesananId);
-
-    console.log("RESPON DARI API:", res);
-
-    const data = res?.pesanan ?? res?.data?.pesanan;
-
-    if (!data) {
-      throw new Error("Data pesanan tidak valid");
+    if (!pesananId) {
+      setError("Pesanan ID tidak ditemukan");
+      setLoading(false);
+      return;
     }
 
-    setDetail({
-      id: String(data.id),
-      jumlah_pesanan: data.jumlah_pesanan ?? 0,
-      pelanggan: {
-        nama_lengkap: data.pelanggan?.nama_lengkap ?? "-",
-        alamat: data.pelanggan?.alamat ?? "-",
-        nomor_telepon: data.pelanggan?.nomor_telepon ?? "-",
-      },
-    });
-  } catch (err: any) {
-    console.error("ERROR DETAIL:", err);
-    setError(err.message || "Gagal memuat detail pesanan");
-  } finally {
-    setLoading(false);
-  }
-};
+    const fetchDetail = async () => {
+      try {
+        setLoading(true);
+        setError(null);
 
-  fetchDetail();
-}, [pesananId]);
+        const res = await getPesananDetail(pesananId);
 
-  const handleMulai = (item: any) => {
+        console.log("RESPON DARI API (halaman sampai):", res);
+
+        const data = res?.pesanan ?? res?.data?.pesanan;
+
+        if (!data) {
+          throw new Error("Data pesanan tidak valid");
+        }
+
+        setDetail({
+          id: String(data.id),
+          jumlah_pesanan: data.jumlah_pesanan ?? 0,
+          pelanggan: {
+            nama_lengkap: data.pelanggan?.nama_lengkap ?? "-",
+            alamat: data.pelanggan?.alamat ?? "-",
+            nomor_telepon: data.pelanggan?.nomor_telepon ?? "-",
+          },
+        });
+      } catch (err: any) {
+        console.error("ERROR DETAIL (halaman sampai):", err);
+        setError(err.message || "Gagal memuat detail pesanan");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDetail();
+  }, [pesananId]);
+
+  const handleSampai = (item: any) => {
     router.push({
-      pathname: "/driver/sampai",
-      params: { pesananId },
+      pathname: "/driver/bukti",
+      params: { pesananId: item.id },
     });
   };
 
@@ -140,8 +140,8 @@ export default function MulaiPesanan() {
               </View>
             </View>
 
-            <TouchableOpacity style={styles.btnMulai} activeOpacity={0.8} onPress={handleMulai}>
-              <Text style={styles.btnText}>Mulai Antar</Text>
+            <TouchableOpacity style={styles.btnSampai} activeOpacity={0.8} onPress={handleSampai}>
+              <Text style={styles.btnText}>Sampai</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -190,8 +190,8 @@ const styles = StyleSheet.create({
   readOnlyMultiline: { minHeight: 100, paddingTop: 12 },
   readOnlyValue: { fontSize: 16, color: "#222" },
   bold: { fontWeight: "600", color: "#00456B" },
-  btnMulai: {
-    backgroundColor: "#d32f2f",
+  btnSampai: {
+    backgroundColor: "#D17B02",  
     borderRadius: 10,
     paddingVertical: 16,
     alignItems: "center",
