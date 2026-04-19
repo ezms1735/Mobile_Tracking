@@ -1,8 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import { ref, set } from "firebase/database";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -20,19 +20,19 @@ import { getCurrentLocation } from "../../services/location";
 const MOYA_LOGO = require("../../assets/images/logo.png");
 
 const StatusBadge = ({ status }: { status: string }) => {
-  const statusLower = status?.toLowerCase() || "";
+  const statusLower = status?.trim().toLowerCase();
 
-  const isProses =
-    statusLower === "proses" ||
-    statusLower === "dalam_proses" ||
-    statusLower === "sedang_proses" ||
-    statusLower.includes("pengiriman");
+  let text = "PROSES";
+  let style = styles.badgeProses;
+
+  if (statusLower === "selesai") {
+    text = "SELESAI";
+    style = styles.badgeSelesai;
+  }
 
   return (
-    <View
-      style={[styles.badge, isProses ? styles.badgeProses : styles.badgeBelum]}
-    >
-      <Text style={styles.badgeText}>{isProses ? "PROSES" : "BELUM"}</Text>
+    <View style={[styles.badge, style]}>
+      <Text style={styles.badgeText}>{text}</Text>
     </View>
   );
 };
@@ -55,10 +55,19 @@ export default function DriverBeranda() {
   };
 
   const handlePilihPesanan = (item: any) => {
-    router.push({
-      pathname: "/driver/mulai",
-      params: { pesananId: item.id },
-    });
+    const status = item.status?.trim().toLowerCase();
+
+    if (status === "selesai") {
+      router.push({
+        pathname: "/driver/riwayat",
+        params: { pesananId: item.id },
+      });
+    } else {
+      router.push({
+        pathname: "/driver/bukti",
+        params: { pesananId: item.id },
+      });
+    }
   };
 
   const kirimLokasi = async () => {
@@ -77,18 +86,20 @@ export default function DriverBeranda() {
     }
   };
 
-  useEffect(() => {
-    const loadData = async () => {
-      setLoading(true);
-      await kirimLokasi();
-      await fetchPesanan();
-      setLoading(false);
-    };
-    loadData();
+  useFocusEffect(
+    useCallback(() => {
+      const loadData = async () => {
+        setLoading(true);
+        await kirimLokasi();
+        await fetchPesanan();
+        setLoading(false);
+      };
+      loadData();
 
-    const interval = setInterval(fetchPesanan, 15000);
-    return () => clearInterval(interval);
-  }, []);
+      const interval = setInterval(fetchPesanan, 15000);
+      return () => clearInterval(interval); 
+    }, [])
+  );
 
   return (
     <View style={styles.container}>
@@ -259,17 +270,16 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 
-  // Badge
   badge: {
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 12,
   },
+  badgeSelesai: {
+    backgroundColor: "#4caf50",
+  },
   badgeProses: {
     backgroundColor: "#ff9800",
-  },
-  badgeBelum: {
-    backgroundColor: "#2196f3",
   },
   badgeText: {
     color: "white",

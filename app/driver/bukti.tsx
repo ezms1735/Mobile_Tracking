@@ -17,6 +17,7 @@ import {
 } from "react-native";
 import { SafeAreaView as SafeAreaViewContext } from "react-native-safe-area-context"; // alias biar jelas
 import * as ImagePicker from "expo-image-picker";
+import { kirimBukti } from "@/services/api";
 
 export default function BuktiPengiriman() {
   const router = useRouter();
@@ -27,7 +28,6 @@ export default function BuktiPengiriman() {
   const [loading, setLoading] = useState(false);
   const [permissionGranted, setPermissionGranted] = useState(false);
 
-  // Minta izin galeri sekali saja saat halaman dimuat
   useEffect(() => {
     (async () => {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -56,35 +56,37 @@ export default function BuktiPengiriman() {
     }
   };
 
-  const handleSelesai = () => {
-    if (!fotoBukti) {
-      Alert.alert("Foto Bukti Wajib", "Silakan upload foto bukti pengiriman terlebih dahulu.");
-      return;
-    }
+// const handleSelesai = async () => {
+//   try {
+//     setLoading(true);
 
-    if (!jumlahTerkirim.trim() || isNaN(Number(jumlahTerkirim)) || Number(jumlahTerkirim) <= 0) {
-      Alert.alert("Jumlah Tidak Valid", "Masukkan jumlah pesanan yang benar (angka positif).");
-      return;
-    }
+//     if (!fotoBukti) {
+//       Alert.alert("Foto Bukti Wajib", "Silakan upload foto bukti.");
+//       return;
+//     }
 
-    Alert.alert(
-      "Konfirmasi Selesai",
-      `Apakah pesanan ${jumlahTerkirim} pack sudah benar-benar terkirim dengan bukti foto?`,
-      [
-        { text: "Batal", style: "cancel" },
-        {
-          text: "Ya, Selesai",
-          onPress: () => {
-            // Di sini nanti panggil API untuk simpan bukti
-            // Contoh: await api.post("/api/driver/bukti", formData);
+//     const formData = new FormData();
 
-            Alert.alert("Sukses", "Bukti pengiriman berhasil disimpan!");
-            router.replace("/driver/riwayat"); // atau "/driver" jika riwayat belum ada
-          },
-        },
-      ]
-    );
-  };
+//     formData.append("bukti_foto", {
+//       uri: fotoBukti,
+//       name: "bukti.jpg",
+//       type: "image/jpeg",
+//     } as any);
+
+//     formData.append("jumlah_terkirim", jumlahTerkirim);
+
+//     await kirimBukti(pesananId, formData);
+
+//     Alert.alert("Sukses", "Bukti berhasil dikirim");
+//     router.replace("/driver/riwayat");
+
+//   } catch (error: any) {
+//     console.log(error.response?.data);
+//     Alert.alert("Error", "Gagal kirim bukti");
+//   } finally {
+//     setLoading(false);
+//   }
+// };
 
   return (
     <SafeAreaViewContext style={styles.safeArea} edges={["top"]}>
@@ -126,7 +128,7 @@ export default function BuktiPengiriman() {
               placeholderTextColor="#999"
             />
 
-            {/* Tombol Selesai */}
+            {/* Tombol Selesai
             <TouchableOpacity
               style={[styles.btnSelesai, loading && styles.btnDisabled]}
               activeOpacity={0.8}
@@ -138,7 +140,7 @@ export default function BuktiPengiriman() {
               ) : (
                 <Text style={styles.btnText}>Selesai</Text>
               )}
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

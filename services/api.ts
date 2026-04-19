@@ -1,7 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios, { AxiosError, AxiosResponse } from "axios";
 
-const API_URL = "http://192.168.1.5:8000"; 
+const API_URL = "https://centuried-nonlucid-diana.ngrok-free.dev"; 
+
 
 const api = axios.create({
   baseURL: API_URL,
@@ -43,6 +44,8 @@ api.interceptors.response.use(
   }
 );
 
+export { api };
+
 
 export const loginUser = async (username: string, password: string) => {
   try {
@@ -59,12 +62,6 @@ export const loginUser = async (username: string, password: string) => {
       if (!token || !role || !user?.id) {
         throw new Error("Data autentikasi tidak lengkap dari server");
       }
-
-      await AsyncStorage.multiSet([
-        ["userToken", token],
-        ["userRole", role],
-        ["driverId", user.id.toString()],
-      ]);
 
       return response.data;
     }
@@ -108,4 +105,22 @@ export const getPesananDetail = async (pesananId: string | number) => {
   } catch (error: any) {
     throw new Error(error.response?.data?.message || "Gagal mengambil detail pesanan");
   }
+};
+
+export const kirimBukti = (id: string | number, data: FormData) => {
+  return api.post(`/api/driver/pesanan/${id}/bukti`, data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
+export const getDriverRiwayat = async () => {
+  const response = await api.get("/api/driver/riwayat");
+  return response.data;
+};
+
+export const getPelangganRiwayat = async () => {
+  const response = await api.get("/api/pelanggan/riwayat");
+  return response.data;
 };
