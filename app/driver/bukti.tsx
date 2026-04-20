@@ -56,37 +56,37 @@ export default function BuktiPengiriman() {
     }
   };
 
-// const handleSelesai = async () => {
-//   try {
-//     setLoading(true);
+const handleSelesai = async () => {
+  try {
+    setLoading(true);
 
-//     if (!fotoBukti) {
-//       Alert.alert("Foto Bukti Wajib", "Silakan upload foto bukti.");
-//       return;
-//     }
+    if (!fotoBukti) {
+      Alert.alert("Foto Bukti Wajib", "Silakan upload foto bukti.");
+      return;
+    }
 
-//     const formData = new FormData();
+    const formData = new FormData();
 
-//     formData.append("bukti_foto", {
-//       uri: fotoBukti,
-//       name: "bukti.jpg",
-//       type: "image/jpeg",
-//     } as any);
+    formData.append("bukti_foto", {
+      uri: fotoBukti,
+      name: "bukti.jpg",
+      type: "image/jpeg",
+    } as any);
 
-//     formData.append("jumlah_terkirim", jumlahTerkirim);
+    formData.append("jumlah_terkirim", jumlahTerkirim);
 
-//     await kirimBukti(pesananId, formData);
+    await kirimBukti(pesananId, formData);
 
-//     Alert.alert("Sukses", "Bukti berhasil dikirim");
-//     router.replace("/driver/riwayat");
+    Alert.alert("Sukses", "Bukti berhasil dikirim");
+    router.replace("/driver/riwayat");
 
-//   } catch (error: any) {
-//     console.log(error.response?.data);
-//     Alert.alert("Error", "Gagal kirim bukti");
-//   } finally {
-//     setLoading(false);
-//   }
-// };
+  } catch (error: any) {
+    console.log(error.response?.data);
+    Alert.alert("Error", "Gagal kirim bukti");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <SafeAreaViewContext style={styles.safeArea} edges={["top"]}>
@@ -128,7 +128,7 @@ export default function BuktiPengiriman() {
               placeholderTextColor="#999"
             />
 
-            {/* Tombol Selesai
+            {/* Tombol Selesai */}
             <TouchableOpacity
               style={[styles.btnSelesai, loading && styles.btnDisabled]}
               activeOpacity={0.8}
@@ -140,7 +140,7 @@ export default function BuktiPengiriman() {
               ) : (
                 <Text style={styles.btnText}>Selesai</Text>
               )}
-            </TouchableOpacity> */}
+            </TouchableOpacity>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
