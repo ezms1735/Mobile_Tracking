@@ -17,7 +17,6 @@ import { getDriverRiwayat } from "../../services/api";
 
 const API_URL = "https://centuried-nonlucid-diana.ngrok-free.dev";
 
-// grouping tanggal
 const groupByDate = (data: any[]) => {
   const grouped: { [key: string]: any[] } = {};
   data.forEach((item) => {
@@ -44,7 +43,6 @@ export default function RiwayatDriver() {
   const [sections, setSections] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // ✅ FIX: state harus di dalam component
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -80,7 +78,6 @@ export default function RiwayatDriver() {
         activeOpacity={0.8}
       >
         <View style={styles.card}>
-        {/* KIRI */}
         <View style={styles.cardLeft}>
           <Text style={styles.customerName} numberOfLines={1}>
             {item.pelanggan?.nama_lengkap || "Pelanggan"}
@@ -95,7 +92,6 @@ export default function RiwayatDriver() {
           </Text>
         </View>
 
-        {/* KANAN */}
         <View style={styles.cardRight}>
           <View style={styles.badgeSelesai}>
             <Text style={styles.badgeText}>Selesai</Text>
@@ -124,12 +120,10 @@ export default function RiwayatDriver() {
 
   return (
     <View style={styles.container}>
-      {/* HEADER */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Riwayat Pengiriman</Text>
       </View>
 
-      {/* LIST */}
       {loading ? (
         <ActivityIndicator size="large" color="#00456B" style={{ marginTop: 80 }} />
       ) : sections.length === 0 ? (
@@ -150,7 +144,7 @@ export default function RiwayatDriver() {
 
       <BottomNavDriver />
 
-      {/* ✅ MODAL DETAIL */}
+      {/* DETAIL */}
       <Modal
         visible={modalVisible}
         transparent
@@ -160,15 +154,13 @@ export default function RiwayatDriver() {
         <View style={styles.modalOverlay}>
           <View style={styles.modalCard}>
             
-            {/* HEADER */}
-            <View style={styles.modalHeader}>
+\            <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Detail Pengiriman</Text>
               <TouchableOpacity onPress={() => setModalVisible(false)}>
                 <Text style={styles.closeIcon}>✕</Text>
               </TouchableOpacity>
             </View>
 
-            {/* CONTENT */}
             {selectedItem && (
               <ScrollView>
                 <Text style={styles.modalLabel}>Nama</Text>

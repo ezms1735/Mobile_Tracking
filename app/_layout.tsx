@@ -7,10 +7,11 @@ export default function RootLayout() {
       <Stack.Screen name="driver/beranda" />
       <Stack.Screen name="driver/riwayat" />
       <Stack.Screen name="driver/profil" />
-      <Stack.Screen name="driver/mulai" />
+      <Stack.Screen name="driver/bukti" />
       <Stack.Screen name="pelanggan/beranda" />
       <Stack.Screen name="pelanggan/riwayat" />
       <Stack.Screen name="pelanggan/profil" />
+      <Stack.Screen name="pelanggan/pemantauan" />
     </Stack>
   );
 }

@@ -96,7 +96,10 @@ export default function DriverBeranda() {
       };
       loadData();
 
-      const interval = setInterval(fetchPesanan, 15000);
+      const interval = setInterval(() => {
+        fetchPesanan();
+        kirimLokasi();
+      }, 5000);
       return () => clearInterval(interval); 
     }, [])
   );

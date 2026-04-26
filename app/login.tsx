@@ -20,7 +20,7 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // 🔑 Cek login otomatis saat buka app
+  // login otomatis 
   useEffect(() => {
     const checkLogin = async () => {
       const token = await AsyncStorage.getItem('userToken');
@@ -49,7 +49,6 @@ export default function Login() {
       if (result.success) {
         const user = result.user;
 
-        // Simpan token dan data user ke AsyncStorage
         await AsyncStorage.multiSet([
           ['userToken', result.token || ''],
           ['userRole', user?.peran || ''],
@@ -78,16 +77,13 @@ export default function Login() {
       style={styles.container}
     >
       <View style={styles.innerContainer}>
-        {/* Logo */}
         <Image
           source={require('../assets/images/logo.png')}
           style={styles.logo}
         />
 
-        {/* Judul */}
         <Text style={styles.title}>Moya Kristal</Text>
 
-        {/* Username */}
         <Text style={styles.label}>Username</Text>
         <InputField
           placeholder="Masukkan username"
@@ -95,7 +91,6 @@ export default function Login() {
           onChangeText={setUsername}
         />
 
-        {/* Password */}
         <Text style={styles.label}>Password</Text>
         <InputField
           placeholder="Masukkan password"
@@ -104,7 +99,6 @@ export default function Login() {
           onChangeText={setPassword}
         />
 
-        {/* Tombol Login */}
         <Button
           title={loading ? 'Memproses...' : 'Masuk'}
           onPress={handleLogin}

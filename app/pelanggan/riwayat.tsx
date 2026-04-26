@@ -82,7 +82,6 @@ export default function RiwayatPelanggan() {
         }}
       >
         <View style={styles.card}>
-          {/* LEFT */}
           <View style={styles.cardLeft}>
             <Text style={styles.driverText}>
               {item.nama_driver || "Driver"}
@@ -100,7 +99,6 @@ export default function RiwayatPelanggan() {
             </Text>
           </View>
 
-          {/* RIGHT */}
           <View style={styles.cardRight}>
             <View style={styles.badgeSelesai}>
               <Text style={styles.badgeText}>Selesai</Text>
@@ -125,12 +123,10 @@ export default function RiwayatPelanggan() {
 
   return (
     <View style={styles.container}>
-      {/* HEADER */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Riwayat</Text>
       </View>
 
-      {/* CONTENT */}
       {loading ? (
         <ActivityIndicator size="large" color="#00456B" style={{ marginTop: 80 }} />
       ) : riwayat.length === 0 ? (
@@ -153,7 +149,6 @@ export default function RiwayatPelanggan() {
         <View style={styles.modalOverlay}>
           <View style={styles.modalCard}>
             
-            {/* HEADER */}
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Detail Pengiriman</Text>
               <TouchableOpacity onPress={() => setModalVisible(false)}>
@@ -161,7 +156,6 @@ export default function RiwayatPelanggan() {
               </TouchableOpacity>
             </View>
 
-            {/* CONTENT */}
             {selectedItem && (
               <ScrollView showsVerticalScrollIndicator={false}>
                 
@@ -316,7 +310,6 @@ const styles = StyleSheet.create({
     color: "#888",
   },
 
-  // MODAL
   modalOverlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.5)",

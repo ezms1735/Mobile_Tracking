@@ -15,6 +15,7 @@ import {
   ScrollView,
   Image,
 } from 'react-native';
+import { useRouter } from 'expo-router';
 import { api } from '../../services/api';
 import BottomNavPelanggan from '../../components/ButtomNavPelanggan';
 
@@ -30,9 +31,11 @@ interface Pesanan {
     nama_lengkap: string;
   };
   nama_driver?: string;
+  driver_id?: number;
 }
 
 const BerandaPelanggan = () => {
+  const router = useRouter();
   const [pesanan, setPesanan] = useState<Pesanan[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -99,6 +102,35 @@ const BerandaPelanggan = () => {
     }
   };
 
+   const handlePressCard = (item: Pesanan) => {
+    const sudahSelesai = item.status_pesanan === 'selesai';
+    const adaDriver = !!(item.driver?.id || item.driver_id);
+
+    if (sudahSelesai) {
+      Alert.alert('Pesanan Selesai', 'Pesanan ini sudah selesai diantarkan.');
+      return;
+    }
+
+    if (!adaDriver) {
+      Alert.alert(
+        'Menunggu Driver',
+        'Pesanan Anda sedang menunggu driver. Lacak posisi tersedia setelah driver ditugaskan.',
+      );
+      return;
+    }
+
+    router.push({
+      pathname: '/pelanggan/pemantauan',
+      params: {
+        pesananId: item.id,
+        driverId: item.driver?.id || item.driver_id,
+        namaDriver: item.nama_driver || item.driver?.nama_lengkap || 'Driver',
+        jumlahPesanan: item.jumlah_pesanan,
+        statusPesanan: item.status_pesanan,
+      }
+    });
+  };
+
   const renderPesananItem = ({ item }: { item: Pesanan }) => {
     const statusColor =
       item.status_pesanan === 'selesai'
@@ -107,8 +139,16 @@ const BerandaPelanggan = () => {
         ? '#F59E0B'
         : '#6B7280';
 
+    const sudahSelesai = item.status_pesanan === 'selesai';
+    const adaDriver = !!(item.driver?.id || item.driver_id);
+    const bisaDilacak = !sudahSelesai && adaDriver;
+
     return (
-      <View style={styles.pesananCard}>
+      <TouchableOpacity
+        style={styles.pesananCard}
+        onPress={() => handlePressCard(item)}
+        activeOpacity={0.75}
+      >
         <View style={styles.cardHeader}>
           <Text style={styles.jumlahText}>Jumlah Pesanan: {item.jumlah_pesanan}</Text>
           <Text style={[styles.statusBadge, { backgroundColor: statusColor + '22', color: statusColor }]}>
@@ -128,7 +168,22 @@ const BerandaPelanggan = () => {
             Dibuat: {new Date(item.created_at).toLocaleDateString('id-ID')}
           </Text>
         )}
-      </View>
+
+        {bisaDilacak && (
+          <View style={styles.lacakRow}>
+            <View style={styles.lacakBtn}>
+              <Text style={styles.lacakIcon}>📍</Text>
+              <Text style={styles.lacakText}>Lacak Pengiriman</Text>
+            </View>
+          </View>
+        )}
+
+        {!sudahSelesai && !adaDriver && (
+          <View style={styles.waitingRow}>
+            <Text style={styles.waitingText}>⏳ Menunggu driver ditugaskan</Text>
+          </View>
+        )}
+      </TouchableOpacity>
     );
   };
 
@@ -349,9 +404,47 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
   },
 
+  // LACAK BUTTON (di dalam card)
+  lacakRow: {
+    marginTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#F3F4F6',
+    paddingTop: 12,
+  },
+  lacakBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#EFF6FF',
+    borderRadius: 8,
+    paddingVertical: 10,
+    gap: 6,
+  },
+  lacakIcon: {
+    fontSize: 16,
+  },
+  lacakText: {
+    color: '#2563EB',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+
+  // WAITING LABEL
+  waitingRow: {
+    marginTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#F3F4F6',
+    paddingTop: 10,
+    alignItems: 'center',
+  },
+  waitingText: {
+    fontSize: 13,
+    color: '#9CA3AF',
+  },
+
   fab: {
     position: 'absolute',
-    bottom: 120, 
+    bottom: 120,
     right: 10,
     zIndex: 10,
   },
@@ -415,7 +508,6 @@ const styles = StyleSheet.create({
     color: '#6B7280',
     fontWeight: 'bold',
   },
-
   modalField: {
     marginBottom: 20,
   },
@@ -434,7 +526,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#E5E7EB',
   },
-
   saveBtn: {
     backgroundColor: '#2563EB',
     paddingVertical: 16,

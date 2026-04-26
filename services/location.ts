@@ -1,6 +1,6 @@
 import * as Location from 'expo-location';
 
-// Fungsi untuk memastikan driver memberikan izin lokasi dan mendapatkan koordinat saat itu
+// Izin lokasi
 export const getCurrentLocation = async () => {
   const { status } = await Location.requestForegroundPermissionsAsync();
 

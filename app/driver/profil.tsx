@@ -42,7 +42,6 @@ export default function ProfilDriver() {
         return;
       }
 
-      // Pakai axios (lebih mudah handle error & interceptor token)
       const response = await api.get('/api/driver/profil');
 
       const data = response.data?.data || response.data;
@@ -197,7 +196,7 @@ export default function ProfilDriver() {
 
       <BottomNavDriver />
 
-      {/* ── Modal Edit ── */}
+      {/* Edit */}
       <Modal
         animationType="slide"
         transparent

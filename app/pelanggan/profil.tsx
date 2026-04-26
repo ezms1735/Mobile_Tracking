@@ -123,7 +123,7 @@ export default function ProfilPelanggan() {
         style: "destructive",
         onPress: async () => {
           try {
-            await api.post("/api/logout").catch(() => {}); // endpoint logout umum
+            await api.post("/api/logout").catch(() => {}); 
           } catch {}
 
           await AsyncStorage.multiRemove(["userToken", "userRole"]);
@@ -207,7 +207,7 @@ export default function ProfilPelanggan() {
 
       <BottomNavPelanggan />
 
-      {/* ── Modal Edit ── */}
+      {/* ── Edit ── */}
       <Modal
         animationType="slide"
         transparent
@@ -315,7 +315,7 @@ const styles = StyleSheet.create({
 
   buttonWrapper: { marginTop: 40, alignItems: "center" },
   editBtn: {
-    backgroundColor: "#3B82F6", // warna biru untuk pelanggan (bisa diganti)
+    backgroundColor: "#3B82F6", 
     width: "80%",
     maxWidth: 240,
     paddingVertical: 14,
